@@ -1,0 +1,79 @@
+Given an array of integers arr of even length n and an integer k.
+
+We want to divide the array into exactly n / 2 pairs such that the sum of each pair is divisible by k.
+
+Return true If you can find a way to do that or false otherwise.
+
+ 
+
+Example 1:
+
+Input: arr = [1,2,3,4,5,10,6,7,8,9], k = 5
+Output: true
+Explanation: Pairs are (1,9),(2,8),(3,7),(4,6) and (5,10).
+Example 2:
+
+Input: arr = [1,2,3,4,5,6], k = 7
+Output: true
+Explanation: Pairs are (1,6),(2,5) and(3,4).
+Example 3:
+
+Input: arr = [1,2,3,4,5,6], k = 10
+Output: false
+Explanation: You can try all possible pairs to see that there is no way to divide arr into 3 pairs each with sum divisible by 10.
+ 
+
+Constraints:
+
+arr.length == n
+1 <= n <= 105
+n is even.
+-109 <= arr[i] <= 109
+1 <= k <= 105
+-------------------Solution----------------
+class Solution {
+    public boolean canArrange(int[] arr, int k) {
+        TreeMap<Integer, Integer> map = new TreeMap<>(); 
+        for(int val : arr){
+            int transformedVal = (val%k + k )%k;
+            map.compute(transformedVal, (key,v)->(v==null) ? 1:v+1); 
+        }
+        
+        Integer zeroCount = map.get(0); 
+        if(zeroCount!=null){
+            if(zeroCount%2==0){
+                map.remove(0); 
+            } else {
+                return false;
+            }
+        }
+
+
+        while(!map.isEmpty()){
+            int first = map.firstKey(); 
+            if(2*first==k){
+                    // this can combine with itself 
+                    Integer value = map.get(first); 
+                    if(value%2==0){
+                        map.remove(first); 
+                        continue; 
+                    } else {
+                        return false;
+                    }
+            } else if(!map.containsKey(k-first)){
+                return false; 
+            } else {
+                int second = map.get(k-first); 
+                map.put(k-first, second-1); 
+                map.put(first, map.get(first)-1); 
+                if(map.get(k-first)==0){
+                    map.remove(k-first); 
+                }
+                if(map.get(first)==0){
+                    map.remove(first); 
+                }
+            }
+        }
+        return true; 
+    }
+}
