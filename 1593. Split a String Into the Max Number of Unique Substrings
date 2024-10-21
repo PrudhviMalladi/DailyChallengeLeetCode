@@ -1,0 +1,66 @@
+Given a string s, return the maximum number of unique substrings that the given string can be split into.
+
+You can split string s into any list of non-empty substrings, where the concatenation of the substrings forms the original string. However, you must split the substrings such that all of them are unique.
+
+A substring is a contiguous sequence of characters within a string.
+
+ 
+
+Example 1:
+
+Input: s = "ababccc"
+Output: 5
+Explanation: One way to split maximally is ['a', 'b', 'ab', 'c', 'cc']. Splitting like ['a', 'b', 'a', 'b', 'c', 'cc'] is not valid as you have 'a' and 'b' multiple times.
+Example 2:
+
+Input: s = "aba"
+Output: 2
+Explanation: One way to split maximally is ['a', 'ba'].
+Example 3:
+
+Input: s = "aa"
+Output: 1
+Explanation: It is impossible to split the string any further.
+ 
+
+Constraints:
+
+1 <= s.length <= 16
+
+s contains only lower case English letters.
+
+--------------------Solition----------
+import java.util.HashSet;
+import java.util.Set;
+
+class Solution {
+    public int maxUniqueSplit(String s) {
+        int[] result = new int[1]; // Using array for pass by reference effect
+        Set<String> memo = new HashSet<>(); // to store unique substrings
+        
+        backtrack(0, "", s, memo, result);
+        
+        return result[0];
+    }
+    
+    private void backtrack(int i, String curr, String s, Set<String> memo, int[] result) {
+        if (i == s.length()) {
+            if (!curr.isEmpty() && !memo.contains(curr)) {
+                result[0] = Math.max(memo.size() + 1, result[0]);
+            }
+            return;
+        }
+        
+        curr += s.charAt(i);
+        
+        // Split here if `curr` is unique
+        if (!memo.contains(curr)) {
+            memo.add(curr);
+            backtrack(i + 1, "", s, memo, result);
+            memo.remove(curr);
+        }
+        
+        // Continue without splitting
+        backtrack(i + 1, curr, s, memo, result);
+    }
+}
