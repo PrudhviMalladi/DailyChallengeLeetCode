@@ -1,0 +1,86 @@
+You are given a string s that consists of lowercase English letters.
+
+A string is called special if it is made up of only a single character. For example, the string "abc" is not special, whereas the strings "ddd", "zz", and "f" are special.
+
+Return the length of the longest special substring of s which occurs at least thrice, or -1 if no special substring occurs at least thrice.
+
+A substring is a contiguous non-empty sequence of characters within a string.
+
+ 
+
+Example 1:
+
+Input: s = "aaaa"
+Output: 2
+Explanation: The longest special substring which occurs thrice is "aa": substrings "aaaa", "aaaa", and "aaaa".
+It can be shown that the maximum length achievable is 2.
+Example 2:
+
+Input: s = "abcdef"
+Output: -1
+Explanation: There exists no special substring which occurs at least thrice. Hence return -1.
+Example 3:
+
+Input: s = "abcaba"
+Output: 1
+Explanation: The longest special substring which occurs thrice is "a": substrings "abcaba", "abcaba", and "abcaba".
+It can be shown that the maximum length achievable is 1.
+ 
+
+Constraints:
+
+3 <= s.length <= 50
+s consists of only lowercase English letters.
+
+-------------Solution--------------------
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class Solution {
+    public int maximumLength(String s) {
+        // List to store all generated substrings
+        List<String> subarrays = new ArrayList<>();
+
+        // Step 1: Generate all substrings where characters are identical
+        for (int i = 0; i < s.length(); i++) {
+            int index = i;
+            // Extend substring while characters match
+            while (index < s.length() && s.charAt(index) == s.charAt(i)) {
+                subarrays.add(s.substring(i, index + 1)); // Add substring to list
+                index++;
+            }
+        }
+
+        // Step 2: Use a HashMap to count occurrences of each substring
+        Map<String, Integer> counter = new HashMap<>();
+        for (String sub : subarrays) {
+            counter.put(sub, counter.getOrDefault(sub, 0) + 1);
+        }
+
+        // Step 3: Find the maximum length of substrings occurring at least 3 times
+        int maxLen = 0;
+        for (Map.Entry<String, Integer> entry : counter.entrySet()) {
+            String substring = entry.getKey();
+            int count = entry.getValue();
+
+            // Check if the substring occurs at least 3 times
+            if (count >= 3) {
+                maxLen = Math.max(maxLen, substring.length());
+            }
+        }
+
+        // Step 4: If no substring meets the condition, return -1
+        return maxLen == 0 ? -1 : maxLen;
+    }
+
+    public static void main(String[] args) {
+        Solution solution = new Solution();
+
+        // Example usage
+        String input = "aabbbaa";
+        System.out.println("Maximum length: " + solution.maximumLength(input));
+    }
+}
